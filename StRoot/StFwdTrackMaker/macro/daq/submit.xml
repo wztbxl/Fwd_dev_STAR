@@ -1,0 +1,55 @@
+<job  name="FwdTracking"  simulateSubmission="false" maxFilesPerProcess="1" filesPerHour="10" fileListSyntax="paths">
+
+    <input URL="filelist:/gpfs01/star/pwg_tasks/FwdCalib//DAQ/zfa/st_physics_23072003.lis" nFiles="500" />
+
+    <!-- Modify these for your case -->
+    <stdout URL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/log/log_$JOBID.log" />
+    <stderr URL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/log/err_$JOBID.err" />
+
+    <output fromScratch="*.trackingQA.root" toURL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/out5/" />
+    <output fromScratch="*.fwdtree.root" toURL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/out5/" />
+    <output fromScratch="*.event.root" toURL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/out5/" />
+    <output fromScratch="*.MuDst.root" toURL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/out5/" />
+    <output fromScratch="*.fttQA.root" toURL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/out5/" />
+    <output fromScratch="*.fstQa.root" toURL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/out5/" />
+    <!-- <output fromScratch="*.fttRawHitTime.dat" toURL="file:/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/out/" /> -->
+
+    <command>
+        echo "JOBINDEX = ${JOBINDEX}"
+        echo "JOBID = ${JOBID}"
+        ln -s StRoot/StFwdTrackMaker/macro/daq/ daq
+
+        <!-- setup 64b -->
+        <!-- starver dev -->
+        module purge
+        unsetenv MODULEPATH
+        starver dev config/v0.2.3-rhel7-root5.34.38-32b
+        module load zlib-1.2.12
+
+        echo "Starting job"
+        root4star -b -q -l 'daq/daq_track.C( 10000, "'$INPUTFILE0'" )' 
+        echo "Job complete"
+
+        mv daq.root ${FILEBASENAME}.trackingQA.root
+        mv fwdtree.root ${FILEBASENAME}.fwdtree.root
+        mv fttQA.root ${FILEBASENAME}.fttQA.root
+
+        <!-- mv OUTPUT.event.root ${FILEBASENAME}.event.root -->
+        <!-- mv OUTPUT.MuDst.root ${FILEBASENAME}.MuDst.root -->
+        
+        <!-- mv fttRawHitTime.dat ${FILEBASENAME}.fttRawHitTime.dat -->
+        <!-- mv OUTPUT.fstQa.root ${FILEBASENAME}.fstQa.root -->
+    </command>
+
+    <SandBox>
+        <Package>
+            <File>file:./StRoot</File>
+            <File>file:./.sl73_x8664_gcc485/</File>
+            <File>file:./.sl73_gcc485/</File>
+        </Package>
+    </SandBox>
+
+    <Generator>
+        <Location>/gpfs01/star/pwg_tasks/FwdCalib/PROD/zfa/gen</Location>
+    </Generator>
+</job>

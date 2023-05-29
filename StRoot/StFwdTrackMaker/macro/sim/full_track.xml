@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <Output url="full_track.root" />
+	<!-- <Geometry>fGeom.root</Geometry> -->
+    <Source ftt="GEANT" fttFilter="true" />
+    <SiRasterizer r="3.0" phi="0.04" active="true" />
+    
+    <TrackFinder nIterations="1">
+        <Iteration nPhiSlices="1"> <!-- Options for first iteration -->
+            <SegmentBuilder>
+                <Criteria name="Crit2_RZRatio" min="0.0" max="10.0" />
+                <Criteria name="Crit2_DeltaPhi" min="0" max="10" />    
+                <Criteria name="Crit2_DeltaRho" min="0" max="10"/>
+                <Criteria name="Crit2_StraightTrackRatio" min="0.8" max="1.2"/>
+            </SegmentBuilder>
+
+            <!-- <ThreeHitSegments>
+                <Criteria name="Crit3_3DAngle" min="0" max="90" />
+                <Criteria name="Crit3_PT" min="0" max="10000" />
+                <Criteria name="Crit3_ChangeRZRatio" min="0" max="100" />
+                <Criteria name="Crit3_2DAngle" min="0" max="100" />
+            </ThreeHitSegments> -->
+        </Iteration>
+
+        <Connector distance="1"/>
+
+        <SubsetNN active="false" min-hits-on-track="3" >
+            <!-- <InitialTemp>2.1</InitialTemp> -->
+            <!-- <InfTemp>0.1</InfTemp> -->
+            <Omega>0.99</Omega>
+            <StableThreshold>0.001</StableThreshold>
+        </SubsetNN> 
+
+        <HitRemover active="false" />
+    </TrackFinder>
+    
+	<TrackFitter refitSi="true" mcSeed="false" MaterialEffects="false" refitGBL="false" >
+        <Vertex sigmaXY="0.001" sigmaZ="0.1" includeInFit="false" smearMcVertex="false" />
+    </TrackFitter>
+</config>
